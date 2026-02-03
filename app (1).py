@@ -21,34 +21,21 @@ except FileNotFoundError:
 
 lemmatizer = WordNetLemmatizer()
 stop_words = set(stopwords.words('english'))
-
 def preprocess_sms(sms_text):
-    """
-    Applies the defined preprocessing steps to a single SMS message.
-
-    Args:
-        sms_text (str): The input SMS message string.
-
-    Returns:
-        str: The processed text string, ready for vectorization.
-    """
-    # 1. Remove special characters and numbers
+    # Remove special characters and numbers
     cleaned_text = re.sub(r'[^a-zA-Z\s]', '', sms_text)
-    cleaned_text = re.sub(r'\s+', ' ', cleaned_text).strip()
+    cleaned_text = re.sub(r'\s+', ' ', cleaned_text).strip().lower()
 
-    # 2. Tokenization
-    tokens = nltk.word_tokenize(cleaned_text)
+    # SIMPLE TOKENIZATION (NO NLTK TOKENIZER)
+    tokens = cleaned_text.split()
 
-    # 3. Removing Stopwords
-    tokens = [word for word in tokens if word.lower() not in stop_words]
+    # Remove stopwords
+    tokens = [word for word in tokens if word not in stop_words]
 
-    # 4. Lemmatization
+    # Lemmatization
     tokens = [lemmatizer.lemmatize(word, pos='v') for word in tokens]
 
-    # Convert tokens back to a string for vectorization
-    processed_text = ' '.join(tokens)
-
-    return processed_text
+    return ' '.join(tokens)
 
 def predict_sms(sms_text, model, vectorizer, label_encoder):
     """
